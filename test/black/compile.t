@@ -313,3 +313,18 @@ Echos are not re-executed in compiled files
    ￫ warning[W2400]
    ￮ not re-executing echo/synth/show commands when loading compiled file $TESTCASE_ROOT/echo.nyo
   
+Metavariables from compiled files work
+
+  $ cat >hasmeta.ny <<EOF
+  > def ℕ : Type ≔ data [ zero. | suc. (n : ℕ) ]
+  > def f (n : ℕ) : ℕ ≔ suc. (match n [ zero. ↦ zero. | suc. k ↦ k ])
+  > EOF
+
+  $ cat >usesmeta.ny <<EOF
+  > import "hasmeta"
+  > def t : Id ℕ (f zero.) (suc. zero.) ≔ refl (suc. zero.)
+  > EOF
+
+  $ narya hasmeta.ny
+
+  $ narya usesmeta.ny
